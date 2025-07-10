@@ -15,7 +15,7 @@ if success then
 else
     return
 end
-_G.firsttimeinjection = false
+ -- _G.firsttimeinjection = false
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
