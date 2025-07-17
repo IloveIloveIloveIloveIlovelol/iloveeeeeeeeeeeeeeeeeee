@@ -1200,7 +1200,7 @@ end
 			end  
 -- dropdown_custom.lua
 
-function ElementFunction:AddDropdown(DropdownConfig)
+function ElementFunction:AddDropdownpeixe(DropdownConfig)
     DropdownConfig = DropdownConfig or {}
     DropdownConfig.Name = DropdownConfig.Name or "Dropdown"
     DropdownConfig.Options = DropdownConfig.Options or {}
