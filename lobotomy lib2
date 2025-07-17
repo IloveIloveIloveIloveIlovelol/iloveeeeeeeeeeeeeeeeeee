@@ -793,6 +793,85 @@ function OrionLib:MakeWindow(WindowConfig)
 
 		local function GetElements(ItemParent)
 			local ElementFunction = {}
+function ElementFunction:AddLicenseExpirationLabel(expireTimestamp)
+	local LabelFrame = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
+		Size = UDim2.new(1, 0, 0, 30),
+		BackgroundTransparency = 0.7,
+		Parent = ItemParent
+	}), {
+		AddThemeObject(SetProps(MakeElement("Label", "", 15), {
+			Size = UDim2.new(1, -40, 1, 0),
+			Position = UDim2.new(0, 12, 0, 0),
+			Font = Enum.Font.Gotham,
+			Name = "Content",
+			TextXAlignment = Enum.TextXAlignment.Left
+		}), "Text"),
+		AddThemeObject(MakeElement("Stroke"), "Stroke")
+	}), "Second")
+
+	-- Bolinha verde de status
+	local StatusBall = Instance.new("Frame")
+	StatusBall.Size = UDim2.new(0, 10, 0, 10)
+	StatusBall.Position = UDim2.new(1, -20, 0.5, -5)
+	StatusBall.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+	StatusBall.BackgroundTransparency = 0
+	StatusBall.BorderSizePixel = 0
+	StatusBall.Name = "StatusBall"
+	StatusBall.Parent = LabelFrame
+	StatusBall.ZIndex = 3
+	StatusBall.ClipsDescendants = true
+	local corner = Instance.new("UICorner", StatusBall)
+	corner.CornerRadius = UDim.new(1, 0)
+
+	-- Efeito fantasma (reflexo animado)
+	local Pulse = Instance.new("Frame")
+	Pulse.Size = UDim2.new(1, 0, 1, 0)
+	Pulse.Position = UDim2.new(0, 0, 0, 0)
+	Pulse.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+	Pulse.BackgroundTransparency = 0.5
+	Pulse.BorderSizePixel = 0
+	Pulse.ZIndex = 2
+	Pulse.Name = "Pulse"
+	Pulse.Parent = StatusBall
+	local pulseCorner = Instance.new("UICorner", Pulse)
+	pulseCorner.CornerRadius = UDim.new(1, 0)
+
+	-- Animação pulsante
+	task.spawn(function()
+		while LabelFrame.Parent do
+			Pulse.Size = UDim2.new(1, 0, 1, 0)
+			Pulse.BackgroundTransparency = 0.5
+			Pulse.Position = UDim2.new(0, 0, 0, 0)
+			Pulse.Visible = true
+
+			Pulse:TweenSize(UDim2.new(2, 0, 2, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 1, false)
+			Pulse:TweenPosition(UDim2.new(-0.5, 0, -0.5, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 1, false)
+			Pulse:TweenTransparency(1, Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 1, true)
+
+			task.wait(1.5)
+		end
+	end)
+
+	local function FormatDate(unix)
+		local date = os.date("*t", unix)
+		return string.format("%02d/%02d/%04d %02d:%02d", date.day, date.month, date.year, date.hour, date.min)
+	end
+
+	local function SetLabelText(unix)
+		LabelFrame.Content.Text = "🔑 Key expira: " .. FormatDate(unix)
+	end
+
+	-- Set initial
+	SetLabelText(expireTimestamp)
+
+	local LabelFunction = {}
+	function LabelFunction:SetExpiration(newUnix)
+		SetLabelText(newUnix)
+	end
+
+	return LabelFunction
+end
+
 function ElementFunction:AddLabelPremium(Status)
 	local LabelFrame = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
 		Size = UDim2.new(1, 0, 0, 30),
